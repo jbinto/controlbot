@@ -13,3 +13,77 @@
 //= require jquery
 //= require jquery_ujs
 //= require_tree .
+
+
+var controlbot = function() {
+  var options = {
+    updateURL: "http://bronzebox:8071/motion-control/update",
+    statusURL: "http://bronzebox:8071/motion-control"
+  };
+
+  var update = function(direction, throttle) {
+    var data = {};
+    data[direction] = throttle;
+    $.ajax({
+      url: options.updateURL,
+      data: data,
+      dataType: "jsonp"
+    });
+  }
+
+  var forward = function() {
+    update("forward", 1);
+  };
+
+  var reverse = function() {
+    update("forward", -1);
+  };
+
+  var right = function() {
+    update("strafe", 1);
+  };
+
+  var left = function() {
+    update("strafe", -1);
+  };
+
+  
+
+  return {
+    forward: forward,
+    reverse: reverse,
+    left: left,
+    right: right,
+    stop: stop
+  };
+
+}();
+
+$(function() {
+  //control = new ControlBot();
+
+  $_btnForward = $('.btn.forward');
+  $_btnReverse = $('.btn.reverse');
+  $_btnLeft = $('.btn.left');
+  $_btnRight = $('.btn.right');
+
+  $_btnForward.click(function() {
+    controlbot.forward();
+  });
+
+  $_btnReverse.click(function() {
+    controlbot.reverse();
+  });
+
+  $_btnLeft.click(function() {
+    controlbot.left();
+  });
+
+  $_btnRight.click(function() {
+    controlbot.right();
+  });
+});
+
+var callback = function(data) {
+  alert("callback:" + data);
+}

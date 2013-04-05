@@ -11,3 +11,48 @@
  *= require_self
  *= require_tree .
  */
+
+body {
+  background-color: #dedede;
+  font-family: sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.btn {
+  background-color: blue;
+  color: white;
+  margin: 5px;
+  padding: 20px;
+  width: 20px;
+  text-align: center;
+  border-radius: 100%;
+}
+
+.btn.stop {
+  background-color: red;
+}
+
+
+.btn.forward, .btn.reverse { background-color: green; }
+
+section#controls {
+  background-color: white;
+  width: 380px;
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  margin-left: -190px;
+}
+
+section#controls div {
+  display: inline-block;
+}
+
+.btn:hover {
+  background-color: #0e0e0e;
+  cursor: pointer;
+}

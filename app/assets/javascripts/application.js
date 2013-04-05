@@ -22,38 +22,41 @@ var controlbot = function() {
     statusURL: "http://192.168.1.54:8071/motion-control"
   };
 
-  var update = function(direction, throttle) {
-    var data = {};
-    data[direction] = throttle;
+  var currentState = {
+    forward: 0,
+    strafe: 0,
+    turn: 0
+  };
+
+  var sendUpdate = function() {
     $.ajax({
       url: options.updateURL,
-      data: data,
+      data: currentState,
       dataType: "jsonp"
     });
   }
 
-  var forward = function() {
-    update("forward", 1);
-  };
+  var forward = function(throttle) {
+    currentState.forward = throttle;
+    sendUpdate();
+  }
 
-  var reverse = function() {
-    update("forward", -1);
-  };
+  var turn = function(throttle) {
+    currentState.turn = throttle;
+    sendUpdate();
+  }
 
-  var right = function() {
-    update("strafe", 1);
-  };
-
-  var left = function() {
-    update("strafe", -1);
-  };
+  var strafe = function(throttle) {
+    currentState.strafe = throttle;
+    sendUpdate();
+  }
 
   var stop = function() {
-    /* hack: this sends 3 AJAX requests */
-    update("forward", 0);
-    update("strafe", 0);
-    update("turn", 0);
-  };
+    currentState.forward = 0;
+    currentState.strafe = 0;
+    currentState.turn = 0;
+    sendUpdate();
+  }
 
   var getStats = function(callback) {
     console.log("getStats called!");
@@ -61,10 +64,14 @@ var controlbot = function() {
   }
 
   return {
+    // forward: forward,
+    // reverse: reverse,
+    // left: left,
+    // right: right,
+    // stop: stop,
     forward: forward,
-    reverse: reverse,
-    left: left,
-    right: right,
+    strafe: strafe,
+    turn: turn,
     stop: stop,
     getStats: getStats
   };
@@ -88,22 +95,22 @@ $(function() {
 
   /* XXX: How can I trigger these by click and keyboard in a clean way? */
   $_btnForward.click(function() {
-    controlbot.forward();    
+    controlbot.forward(1);    
     toggleButton($(this));
   });
 
   $_btnReverse.click(function() {
-    controlbot.reverse();
+    controlbot.forward(-1);
     toggleButton($(this));
   });
 
   $_btnLeft.click(function() {
-    controlbot.left();
+    controlbot.strafe(1);
     toggleButton($(this));
   });
 
   $_btnRight.click(function() {
-    controlbot.right();
+    controlbot.strafe(-1);
     toggleButton($(this));
   });
 
@@ -113,7 +120,6 @@ $(function() {
   });
 
   var updateStatsDisplay = function(stats) {
-    console.log("updateStatsDisplay called!" + stats.forward + stats.turn + stats.strafe);
     $_statsForward.text(stats.forward);
     $_statsTurn.text(stats.turn);
     $_statsStrafe.text(stats.strafe);
@@ -128,7 +134,6 @@ $(function() {
 
   /* This is hacky: how can I do this without polling? */
   setInterval(function() {
-    console.log("setInterval called!");
     controlbot.getStats(updateStatsDisplay);
   }, 500);
 

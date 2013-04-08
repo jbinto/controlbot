@@ -18,8 +18,8 @@
 var controlbot = function() {
   var options = {
     dryRun: true,
-    updateURL: "http://bronzebox:8071/motion-control/update",
-    statusURL: "http://bronzebox:8071/motion-control"
+    updateURL: "http://192.168.1.54:8071/motion-control/update",
+    statusURL: "http://192.168.1.54:8071/motion-control"
   };
 
   var currentState = {
@@ -34,41 +34,36 @@ var controlbot = function() {
       data: currentState,
       dataType: "jsonp"
     });
-  }
+  };
 
   var forward = function(throttle) {
     currentState.forward = throttle;
     sendUpdate();
-  }
+  };
 
   var turn = function(throttle) {
     currentState.turn = throttle;
     sendUpdate();
-  }
+  };
 
   var strafe = function(throttle) {
     currentState.strafe = throttle;
     sendUpdate();
-  }
+  };
 
   var stop = function() {
     currentState.forward = 0;
     currentState.strafe = 0;
     currentState.turn = 0;
     sendUpdate();
-  }
+  };
 
   var getStats = function(callback) {
     console.log("getStats called!");
     $.get(options.statusURL, null, callback, "jsonp");
-  }
+  };
 
   return {
-    // forward: forward,
-    // reverse: reverse,
-    // left: left,
-    // right: right,
-    // stop: stop,
     forward: forward,
     strafe: strafe,
     turn: turn,
@@ -101,7 +96,7 @@ $(function() {
   }
 
   var toggleButtonPair = function($active, $inactive) {    
-    $active.toggleClass('active');
+    $active.addClass('active');
     $inactive.removeClass('active');
     $_btnStop.removeClass('active');
   }
@@ -128,12 +123,12 @@ $(function() {
   };
 
   var turnLeft = function() {
-    controlbot.turn(1);
+    controlbot.turn(-1);
     toggleButtonPair($_btnTurnLeft, $_btnTurnRight); 
   };
 
   var turnRight = function() {
-    controlbot.turn(-1);
+    controlbot.turn(1);
     toggleButtonPair($_btnTurnRight, $_btnTurnLeft);
   };
 
@@ -180,7 +175,6 @@ $(function() {
 
     // alert(e.keyCode);
   });
-
 
   /* set up status update */
   /* This is hacky: how can I do this without polling? */

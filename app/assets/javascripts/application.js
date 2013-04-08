@@ -18,8 +18,8 @@
 var controlbot = function() {
   var options = {
     dryRun: true,
-    updateURL: "http://192.168.1.54:8071/motion-control/update",
-    statusURL: "http://192.168.1.54:8071/motion-control"
+    updateURL: "http://bronzebox:8071/motion-control/update",
+    statusURL: "http://bronzebox:8071/motion-control"
   };
 
   var currentState = {
@@ -86,6 +86,8 @@ $(function() {
   $_btnLeft = $('.btn.left');
   $_btnRight = $('.btn.right');
   $_btnStop = $('.btn.stop');
+  $_btnTurnLeft = $('.btn.turnleft');
+  $_btnTurnRight = $('.btn.turnright');
 
   $_statsForward = $('.stats.forward');
   $_statsStrafe = $('.stats.strafe');
@@ -96,27 +98,38 @@ $(function() {
   /* XXX: How can I trigger these by click and keyboard in a clean way? */
   $_btnForward.click(function() {
     controlbot.forward(1);    
-    toggleButton($(this));
+    toggleButtonPair($(this), $_btnReverse); 
   });
 
   $_btnReverse.click(function() {
     controlbot.forward(-1);
-    toggleButton($(this));
+    toggleButtonPair($(this), $_btnForward); 
   });
 
   $_btnLeft.click(function() {
     controlbot.strafe(1);
-    toggleButton($(this));
+    toggleButtonPair($(this), $_btnRight); 
   });
 
   $_btnRight.click(function() {
     controlbot.strafe(-1);
-    toggleButton($(this));
+    toggleButtonPair($(this), $_btnLeft); 
+  });
+
+  $_btnTurnLeft.click(function() {
+    controlbot.turn(1);
+    toggleButtonPair($(this), $_btnTurnRight); 
+  });
+
+  $_btnTurnRight.click(function() {
+    controlbot.turn(-1);
+    toggleButtonPair($(this), $_btnTurnLeft);
   });
 
   $_btnStop.click(function() {
     controlbot.stop();
-    toggleButton($(this));
+    $('.btn').removeClass('active');
+    $(this).toggleClass('active');
   });
 
   var updateStatsDisplay = function(stats) {
@@ -125,9 +138,9 @@ $(function() {
     $_statsStrafe.text(stats.strafe);
   }
 
-  var toggleButton = function($button) {
-    $('.btn').css('border', '0');
-    $($button).css('border', '5px solid #aa0000');
+  var toggleButtonPair = function($active, $inactive) {
+    $active.toggleClass('active');
+    $inactive.removeClass('active');
   }
 
   /* set up status update */
@@ -136,6 +149,9 @@ $(function() {
   setInterval(function() {
     controlbot.getStats(updateStatsDisplay);
   }, 500);
+
+  /* stop the robot! */
+
 
 });
 

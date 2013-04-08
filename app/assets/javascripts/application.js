@@ -152,6 +152,35 @@ $(function() {
   $_btnTurnRight.click(function() { turnRight(); });
   $_btnStop.click(function() { stop(); });
 
+  $('body').keydown(function(e) {
+    switch (e.keyCode) {
+      case 87: /* w */
+        forward();
+        break;
+      case 83: /* s */
+        reverse();
+        break;
+      case 68: /* d */
+        right();
+        break;
+      case 65: /* a */
+        left();
+        break;
+      case 32: /* SPACE */
+        stop();
+        break;
+
+      case 81: /* q */
+        turnLeft();
+        break;
+      case 69: /* e */
+        turnRight();
+        break;
+    }
+
+    // alert(e.keyCode);
+  });
+
 
   /* set up status update */
   /* This is hacky: how can I do this without polling? */
